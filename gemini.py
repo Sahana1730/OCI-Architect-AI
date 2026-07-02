@@ -1,4 +1,5 @@
 import os
+import time
 import streamlit as st
 import google.generativeai as genai
 
@@ -8,7 +9,7 @@ import google.generativeai as genai
 
 api_key = None
 
-# Local (.env)
+# Load from .env (Local)
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -16,7 +17,7 @@ try:
 except Exception:
     pass
 
-# Streamlit Cloud Secrets
+# Load from Streamlit Cloud Secrets
 if not api_key:
     try:
         api_key = st.secrets["GEMINI_API_KEY"]
@@ -32,8 +33,9 @@ if not api_key:
 
 genai.configure(api_key=api_key)
 
-# Fast model
+# Fast Gemini Model
 model = genai.GenerativeModel("gemini-2.5-flash")
+
 
 # ==========================================
 # AI ARCHITECT
@@ -52,30 +54,24 @@ Recommended OCI Services:
 
 Explain ONLY the following:
 
-## Application Overview
-Brief overview of the application.
+1. Application Overview
+2. Why each OCI service is selected
+3. Security Recommendations
+4. Scalability Recommendations
+5. Best Practices
 
-## Why These OCI Services?
-Explain why every OCI service is selected.
+Keep the explanation beginner-friendly.
 
-## Security Recommendations
-Mention IAM, VCN, encryption, backups and least privilege.
-
-## Scalability Recommendations
-Mention autoscaling, load balancing and database scaling.
-
-## Best Practices
-Give 5 practical OCI best practices.
-
-Keep the explanation simple.
-Maximum 250 words.
+Maximum 200 words.
 """
 
     try:
 
-        print("========== GEMINI PROMPT ==========")
+        print("\n========== GEMINI PROMPT ==========")
         print(prompt)
         print("==================================")
+
+        start = time.time()
 
         response = model.generate_content(
             prompt,
@@ -85,10 +81,13 @@ Maximum 250 words.
             )
         )
 
+        end = time.time()
+
+        print(f"✅ Gemini Time: {end - start:.2f} seconds")
+
         if hasattr(response, "text") and response.text:
             return response.text
 
-        # Fallback for empty text responses
         if hasattr(response, "candidates"):
             try:
                 return response.candidates[0].content.parts[0].text
@@ -98,6 +97,8 @@ Maximum 250 words.
         return "No response generated."
 
     except Exception as e:
+
+        print("Gemini Error:", str(e))
 
         return f"""
 ## ❌ Gemini Error
