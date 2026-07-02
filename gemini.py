@@ -3,36 +3,36 @@ import streamlit as st
 import google.generativeai as genai
 
 # ==========================================
-# LOAD API KEY
+# LOAD GEMINI API KEY
 # ==========================================
 
 api_key = None
 
-# Load from .env (Local)
+# Local (.env)
 try:
     from dotenv import load_dotenv
     load_dotenv()
     api_key = os.getenv("GEMINI_API_KEY")
-except:
+except Exception:
     pass
 
-# Load from Streamlit Cloud Secrets
+# Streamlit Cloud Secrets
 if not api_key:
     try:
         api_key = st.secrets["GEMINI_API_KEY"]
-    except:
+    except Exception:
         pass
 
 if not api_key:
     raise Exception("GEMINI_API_KEY not found.")
 
-# Configure Gemini
+# ==========================================
+# CONFIGURE GEMINI
+# ==========================================
+
 genai.configure(api_key=api_key)
 
-# ==========================================
-# FAST GEMINI MODEL
-# ==========================================
-
+# Fast model
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 # ==========================================
@@ -42,51 +42,65 @@ model = genai.GenerativeModel("gemini-2.5-flash")
 def explain_architecture(user_input, services):
 
     prompt = f"""
-You are an experienced Oracle Cloud Infrastructure (OCI) Architect.
+You are an experienced Oracle Cloud Infrastructure (OCI) Solution Architect.
 
 Application Description:
 {user_input}
 
 Recommended OCI Services:
-{', '.join(services)}
+{", ".join(services)}
 
-Explain the architecture using the following format:
+Explain ONLY the following:
 
 ## Application Overview
-Briefly explain what the application does.
+Brief overview of the application.
 
 ## Why These OCI Services?
-Explain why each service is recommended.
+Explain why every OCI service is selected.
 
 ## Security Recommendations
-Mention IAM, encryption, VCN, backups and least privilege.
+Mention IAM, VCN, encryption, backups and least privilege.
 
 ## Scalability Recommendations
-Explain autoscaling, load balancing and storage scalability.
+Mention autoscaling, load balancing and database scaling.
 
 ## Best Practices
 Give 5 practical OCI best practices.
 
-Keep the explanation beginner-friendly.
-Limit the response to around 300 words.
+Keep the explanation simple.
+Maximum 250 words.
 """
 
     try:
 
+        print("========== GEMINI PROMPT ==========")
+        print(prompt)
+        print("==================================")
+
         response = model.generate_content(
             prompt,
             generation_config=genai.GenerationConfig(
-                temperature=0.3,
-                max_output_tokens=500
+                temperature=0.2,
+                max_output_tokens=250,
             )
         )
 
-        return response.text
+        if hasattr(response, "text") and response.text:
+            return response.text
+
+        # Fallback for empty text responses
+        if hasattr(response, "candidates"):
+            try:
+                return response.candidates[0].content.parts[0].text
+            except Exception:
+                pass
+
+        return "No response generated."
 
     except Exception as e:
 
         return f"""
-### ❌ Gemini Error
+## ❌ Gemini Error
 
 {str(e)}
 """
