@@ -208,12 +208,11 @@ The cost estimation shown above is an approximate value intended for educational
         st.divider()
 
         st.subheader("🤖 AI Cloud Architect")
-
-        with st.spinner("Gemini is reviewing your architecture..."):
-            if st.button("✨ Explain Architecture with AI"):
+        if st.button("✨ Explain Architecture with AI"):
+            with st.spinner("Gemini is reviewing your architecture..."):
                 ai_response = explain_architecture(
                     user_input,
                     services
                 )
 
-        st.markdown(ai_response)
+            st.markdown(ai_response)
