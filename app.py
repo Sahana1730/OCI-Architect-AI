@@ -15,6 +15,15 @@ st.set_page_config(
     page_icon="☁️",
     layout="wide"
 )
+# ==========================================
+# SESSION STATE
+# ==========================================
+
+if "ai_response" not in st.session_state:
+    st.session_state["ai_response"] = ""
+
+if "generated" not in st.session_state:
+    st.session_state["generated"] = False
 
 # ==========================================
 # HEADER
@@ -213,10 +222,10 @@ if st.button("✨ Explain Architecture with AI"):
 
     with st.spinner("Gemini is reviewing your architecture..."):
 
-        st.session_state.ai_response = explain_architecture(
+        st.session_state["ai_response"] = explain_architecture(
             user_input,
             services
         )
 
-if st.session_state.ai_response != "":
-    st.markdown(st.session_state.ai_response)
+if st.session_state.get("ai_response", ""):
+    st.markdown(st.session_state["ai_response"])
