@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 
-# Load .env file
+# Load .env
 load_dotenv()
 
 # Configure Gemini
@@ -18,12 +18,10 @@ def explain_architecture(user_input, services):
 You are a Senior Oracle Cloud Architect.
 
 Application Description:
-
 {user_input}
 
 Recommended OCI Services:
-
-{', '.join(services)}
+{", ".join(services)}
 
 Explain:
 
@@ -33,13 +31,16 @@ Explain:
 4. Best practices.
 
 Keep the explanation simple for a Computer Science fresher.
+Limit the response to 200 words.
 """
-    response = model.generate_content(
-    prompt,
-    generation_config=genai.GenerationConfig(
-        temperature=0,
-        max_output_tokens=120,
-        top_p=0.8,
-        top_k=20,
-    )
-)
+
+    try:
+        response = model.generate_content(prompt)
+
+        if response.text:
+            return response.text
+
+        return "No response generated."
+
+    except Exception as e:
+        return f"Gemini Error: {str(e)}"
