@@ -206,12 +206,13 @@ The cost estimation shown above is an approximate value intended for educational
         # ======================================
 
         st.divider()
-        if st.button("✨ Explain Architecture with AI"):
-            if "ai_response" not in st.session_state or st.session_state["ai_response"] == "":
-                with st.spinner("Generating AI explanation..."):
-                    st.session_state["ai_response"] = explain_architecture(
-                        user_input,
-                        st.session_state["services"]
-            )
 
-        st.markdown(st.session_state.get("ai_response", ""))
+        st.subheader("🤖 AI Cloud Architect")
+        with st.spinner("Gemini is reviewing your architecture..."):
+            
+                ai_response = explain_architecture(
+                    user_input,
+                    services
+                )
+
+        st.markdown(ai_response)
