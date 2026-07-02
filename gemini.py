@@ -34,7 +34,12 @@ Explain:
 
 Keep the explanation simple for a Computer Science fresher.
 """
-
-    response = model.generate_content(prompt)
-
-    return response.text
+    response = model.generate_content(
+    prompt,
+    generation_config=genai.GenerationConfig(
+        temperature=0,
+        max_output_tokens=120,
+        top_p=0.8,
+        top_k=20,
+    )
+)

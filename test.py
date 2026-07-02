@@ -1,17 +1,15 @@
-from ai.requirement_analyzer import analyze_requirements
+import os
+from dotenv import load_dotenv
+import google.generativeai as genai
 
-data = analyze_requirements("""
-Build an ecommerce application.
+load_dotenv()
 
-50000 users.
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-Payments.
+model = genai.GenerativeModel(
+    "gemini-2.5-flash-lite"
+)
 
-Login.
+response = model.generate_content("Say hello in one sentence.")
 
-Image uploads.
-
-Order tracking.
-""")
-
-print(data)
+print(response.text)
