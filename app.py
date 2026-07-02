@@ -15,15 +15,6 @@ st.set_page_config(
     page_icon="☁️",
     layout="wide"
 )
-# ==========================================
-# SESSION STATE
-# ==========================================
-
-if "ai_response" not in st.session_state:
-    st.session_state["ai_response"] = ""
-
-if "generated" not in st.session_state:
-    st.session_state["generated"] = False
 
 # ==========================================
 # HEADER
@@ -87,7 +78,6 @@ if generate:
         # ======================================
 
         services = recommend_services(project)
-        st.session_state["services"] = services
 
         # ======================================
         # COST ESTIMATION
@@ -211,22 +201,18 @@ This architecture recommendation is generated using the built-in Oracle Cloud re
 The cost estimation shown above is an approximate value intended for educational purposes.
 """)
 
-# ======================================
-# AI CLOUD ARCHITECT
-# ======================================
+        # ======================================
+        # AI CLOUD ARCHITECT
+        # ======================================
 
-st.divider()
+        st.divider()
 
-st.subheader("🤖 AI Cloud Architect")
+        st.subheader("🤖 AI Cloud Architect")
+        with st.spinner("Gemini is reviewing your architecture..."):
+            
+                ai_response = explain_architecture(
+                    user_input,
+                    services
+                )
 
-if st.button("✨ Explain Architecture with AI"):
-
-    with st.spinner("Gemini is reviewing your architecture..."):
-
-        st.session_state["ai_response"] = explain_architecture(
-            user_input,
-            st.session_state["services"]
-        )
-
-if st.session_state.get("ai_response", ""):
-    st.markdown(st.session_state["ai_response"])
+        st.markdown(ai_response)
