@@ -214,5 +214,5 @@ The cost estimation shown above is an approximate value intended for educational
                     user_input,
                     services
                 )
-
-            st.markdown(ai_response)
+if st.session_state.ai_response:
+    st.markdown(st.session_state.ai_response)
