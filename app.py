@@ -87,6 +87,7 @@ if generate:
         # ======================================
 
         services = recommend_services(project)
+        st.session_state["services"] = services
 
         # ======================================
         # COST ESTIMATION
@@ -224,7 +225,7 @@ if st.button("✨ Explain Architecture with AI"):
 
         st.session_state["ai_response"] = explain_architecture(
             user_input,
-            services
+            st.session_state["services"]
         )
 
 if st.session_state.get("ai_response", ""):
