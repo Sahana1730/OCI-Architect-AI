@@ -201,18 +201,22 @@ This architecture recommendation is generated using the built-in Oracle Cloud re
 The cost estimation shown above is an approximate value intended for educational purposes.
 """)
 
-        # ======================================
-        # AI CLOUD ARCHITECT
-        # ======================================
+# ======================================
+# AI CLOUD ARCHITECT
+# ======================================
 
-        st.divider()
+st.divider()
 
-        st.subheader("🤖 AI Cloud Architect")
-        if st.button("✨ Explain Architecture with AI"):
-            with st.spinner("Gemini is reviewing your architecture..."):
-                ai_response = explain_architecture(
-                    user_input,
-                    services
-                )
-if st.session_state.ai_response:
+st.subheader("🤖 AI Cloud Architect")
+
+if st.button("✨ Explain Architecture with AI"):
+
+    with st.spinner("Gemini is reviewing your architecture..."):
+
+        st.session_state.ai_response = explain_architecture(
+            user_input,
+            services
+        )
+
+if st.session_state.ai_response != "":
     st.markdown(st.session_state.ai_response)
